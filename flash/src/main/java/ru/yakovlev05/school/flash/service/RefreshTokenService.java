@@ -13,4 +13,6 @@ public interface RefreshTokenService {
     void delete(RefreshToken refreshToken);
 
     void save(String refreshToken, User user, Date expiredAt);
+
+    void revokeAllTokens(Long userId);
 }

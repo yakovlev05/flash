@@ -1,5 +1,6 @@
 package ru.yakovlev05.school.flash.exception.handler;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import java.util.Date;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @Hidden // Чтобы в сваггере не отображался как вариант ответа
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public InternalErrorDto handleException(Exception ex, HttpServletRequest request) {

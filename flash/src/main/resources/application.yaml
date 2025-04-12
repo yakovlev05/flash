@@ -15,5 +15,5 @@ security:
   jwt:
     key-for-access: qwertyqwertyqwrtyytrtetetrrrrrrtrtrrtrertetetrrterttrtrtrtrtrtrtqwerty
     key-for-refresh: weqdlsfsghfhdsdhdfhdfgrtrtrtrtrtttttttttttttttttttttttrtetrt
-    access-token-life-time: 60
+    access-token-life-time: 10000
     refresh-token-life-time: 5

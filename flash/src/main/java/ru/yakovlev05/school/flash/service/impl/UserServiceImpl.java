@@ -1,9 +1,15 @@
 package ru.yakovlev05.school.flash.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.yakovlev05.school.flash.dto.UpdateUserRequest;
+import ru.yakovlev05.school.flash.dto.UserResponse;
+import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.User;
 import ru.yakovlev05.school.flash.repository.UserRepository;
+import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.service.UserService;
 
 @RequiredArgsConstructor
@@ -11,6 +17,10 @@ import ru.yakovlev05.school.flash.service.UserService;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private final RefreshTokenService refreshTokenService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public boolean existsByUsername(String username) {
@@ -25,6 +35,35 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByUsername(String username) {
         return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public UserResponse getMyInfo(JwtAuthentication jwtAuthentication) {
+        User user = getById(jwtAuthentication.getUserId());
+        return new UserResponse(user.getUsername());
+    }
+
+    @Override
+    public void updateMyInfo(JwtAuthentication jwtAuthentication, UpdateUserRequest updateUserRequest) {
+        User user = getById(jwtAuthentication.getUserId());
+        user.setPassword(passwordEncoder.encode(updateUserRequest.password()));
+        user.setUsername(updateUserRequest.username());
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public void deleteMyUser(JwtAuthentication jwtAuthentication) {
+        User user = getById(jwtAuthentication.getUserId());
+        user.setDeleted(true);
+        refreshTokenService.revokeAllTokens(user.getId());
+        userRepository.save(user);
+    }
+
+    private User getById(Long id) {
+        return this.userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
