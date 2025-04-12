@@ -7,5 +7,13 @@ spring:
     password: ${POSTGRES_PASSWORD:password}
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     open-in-view: false
+
+
+security:
+  jwt:
+    key-for-access: qwertyqwertyqwrtyytrtetetrrrrrrtrtrrtrertetetrrterttrtrtrtrtrtrtqwerty
+    key-for-refresh: weqdlsfsghfhdsdhdfhdfgrtrtrtrtrtttttttttttttttttttttttrtetrt
+    access-token-life-time: 60
+    refresh-token-life-time: 5
