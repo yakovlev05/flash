@@ -30,4 +30,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<ChatParticipant> chats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
 }
