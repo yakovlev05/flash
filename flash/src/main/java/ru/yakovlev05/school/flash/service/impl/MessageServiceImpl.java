@@ -1,0 +1,47 @@
+package ru.yakovlev05.school.flash.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.yakovlev05.school.flash.dto.MessageResponse;
+import ru.yakovlev05.school.flash.dto.UserResponse;
+import ru.yakovlev05.school.flash.entity.JwtAuthentication;
+import ru.yakovlev05.school.flash.entity.Message;
+import ru.yakovlev05.school.flash.repository.MessageRepository;
+import ru.yakovlev05.school.flash.service.ChatParticipantService;
+import ru.yakovlev05.school.flash.service.MessageService;
+
+import java.time.ZoneOffset;
+import java.util.Comparator;
+import java.util.List;
+
+@RequiredArgsConstructor
+@Service
+public class MessageServiceImpl implements MessageService {
+
+    private final MessageRepository messageRepository;
+
+    private final ChatParticipantService chatParticipantService;
+
+    @Override
+    public List<MessageResponse> getListMessages(JwtAuthentication jwtAuthentication, Long chatId) {
+        if (!chatParticipantService.isUserParticipant(chatId, jwtAuthentication.getUserId())) {
+            throw new RuntimeException("You are not participant of this chat");
+        }
+
+        return messageRepository.findAllByChatId(chatId).stream()
+                .sorted(Comparator.comparingLong(Message::getId))
+                .map(this::toDto)
+                .toList();
+    }
+
+    private MessageResponse toDto(Message message) {
+        UserResponse userResponse = new UserResponse(message.getSender().getUsername());
+        return new MessageResponse(
+                message.getId(),
+                message.getChatId(),
+                userResponse,
+                message.getText(),
+                message.getSentAt().toEpochSecond(ZoneOffset.UTC)
+        );
+    }
+}
