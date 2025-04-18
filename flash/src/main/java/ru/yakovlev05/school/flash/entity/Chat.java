@@ -1,10 +1,18 @@
 package ru.yakovlev05.school.flash.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "chats")
 public class Chat {
@@ -18,7 +26,7 @@ public class Chat {
 
     private String title;
 
-    @OneToMany(mappedBy = "chat")
+    @OneToMany(mappedBy = "id.chat", cascade = CascadeType.PERSIST)
     private List<ChatParticipant> participants = new ArrayList<>();
 
     public enum Type {

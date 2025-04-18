@@ -2,8 +2,9 @@ package ru.yakovlev05.school.flash.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,31 +17,29 @@ public class ChatParticipant {
     @EmbeddedId
     private CompositeId id;
 
-    @ManyToOne
-    @JoinColumn(name = "chat_id", insertable = false, updatable = false)
-    private Chat chat;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
-
-    private LocalDateTime joinedAt;
+    @CreationTimestamp
+    private Instant joinedAt;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.PARTICIPANT;
 
     public enum Role {
         ADMIN, PARTICIPANT
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
     @EqualsAndHashCode
     @Embeddable
     public static class CompositeId {
+        @ManyToOne
+        @JoinColumn(name = "chat_id", insertable = false, updatable = false)
+        private Chat chat;
 
-        @Column(name = "chat_id")
-        private Long chatId;
-
-        @Column(name = "user_id")
-        private Long userId;
+        @ManyToOne
+        @JoinColumn(name = "user_id", insertable = false, updatable = false)
+        private User user;
     }
 }

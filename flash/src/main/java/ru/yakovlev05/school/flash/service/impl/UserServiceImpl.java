@@ -12,6 +12,8 @@ import ru.yakovlev05.school.flash.repository.UserRepository;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.service.UserService;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -62,9 +64,15 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    private User getById(Long id) {
+    @Override
+    public User getById(Long id) {
         return this.userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public List<User> getListUsersByIds(List<Long> ids) {
+        return userRepository.findByIdIn(ids);
     }
 
 }

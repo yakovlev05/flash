@@ -13,6 +13,6 @@ public class ChatParticipantServiceImpl implements ChatParticipantService {
 
     @Override
     public boolean isUserParticipant(Long userId, Long chatId) {
-        return chatParticipantRepository.existsByChatIdAndUserId(chatId, userId);
+        return chatParticipantRepository.isChatParticipant(chatId, userId);
     }
 }

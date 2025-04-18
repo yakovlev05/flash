@@ -5,6 +5,8 @@ import ru.yakovlev05.school.flash.dto.UserResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.User;
 
+import java.util.List;
+
 public interface UserService {
     boolean existsByUsername(String username);
 
@@ -17,4 +19,8 @@ public interface UserService {
     void updateMyInfo(JwtAuthentication jwtAuthentication, UpdateUserRequest updateUserRequest);
 
     void deleteMyUser(JwtAuthentication jwtAuthentication);
+
+    User getById(Long id);
+
+    List<User> getListUsersByIds(List<Long> ids);
 }

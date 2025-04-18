@@ -30,7 +30,7 @@ public class User {
     @OneToMany(mappedBy = "sender")
     private List<Message> messages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "id.user")
     private List<ChatParticipant> chats = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
