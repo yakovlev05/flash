@@ -10,7 +10,6 @@ import ru.yakovlev05.school.flash.repository.MessageRepository;
 import ru.yakovlev05.school.flash.service.ChatParticipantService;
 import ru.yakovlev05.school.flash.service.MessageService;
 
-import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,14 +33,19 @@ public class MessageServiceImpl implements MessageService {
                 .toList();
     }
 
+    @Override
+    public void save(Message messageEntity) {
+        messageRepository.save(messageEntity);
+    }
+
     private MessageResponse toDto(Message message) {
         UserResponse userResponse = new UserResponse(message.getSender().getUsername());
         return new MessageResponse(
                 message.getId(),
-                message.getChatId(),
+                message.getChat().getId(),
                 userResponse,
                 message.getText(),
-                message.getSentAt().toEpochSecond(ZoneOffset.UTC)
+                message.getSentAt()
         );
     }
 }

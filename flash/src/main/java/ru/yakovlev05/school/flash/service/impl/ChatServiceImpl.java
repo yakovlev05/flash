@@ -57,7 +57,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public ChatResponse createGroupChat(JwtAuthentication jwtAuthentication, CreateGroupChatRequest createGroupChatRequest) {
-        if (createGroupChatRequest.participantsId().contains(jwtAuthentication.getUserId())){
+        if (createGroupChatRequest.participantsId().contains(jwtAuthentication.getUserId())) {
             throw new RuntimeException("Id создателя не нужно передавать в списке участников");
         }
         // Если есть невалидные id, то они будут проигнорированы
@@ -78,6 +78,12 @@ public class ChatServiceImpl implements ChatService {
 
         chatRepository.save(chat);
         return toDto(chat);
+    }
+
+    @Override
+    public Chat getById(Long chatId) {
+        return chatRepository.findById(chatId)
+                .orElseThrow(() -> new RuntimeException("Чат с id " + chatId + " не найден"));
     }
 
     private Chat getPrivateChatOrNull(Long firstUserId, Long secondUserId) {

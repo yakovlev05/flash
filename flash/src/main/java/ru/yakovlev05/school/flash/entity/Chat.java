@@ -26,6 +26,9 @@ public class Chat {
 
     private String title;
 
+    @OneToMany(mappedBy = "chat")
+    private List<Message> messages = new ArrayList<>();
+
     @OneToMany(mappedBy = "id.chat", cascade = CascadeType.PERSIST)
     private List<ChatParticipant> participants = new ArrayList<>();
 
