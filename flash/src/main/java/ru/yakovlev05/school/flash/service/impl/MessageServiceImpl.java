@@ -6,6 +6,7 @@ import ru.yakovlev05.school.flash.dto.message.MessageResponse;
 import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.Message;
+import ru.yakovlev05.school.flash.exception.handler.ForbiddenException;
 import ru.yakovlev05.school.flash.repository.MessageRepository;
 import ru.yakovlev05.school.flash.service.ChatParticipantService;
 import ru.yakovlev05.school.flash.service.MessageService;
@@ -24,7 +25,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<MessageResponse> getListMessages(JwtAuthentication jwtAuthentication, Long chatId) {
         if (!chatParticipantService.isUserParticipant(chatId, jwtAuthentication.getUserId())) {
-            throw new RuntimeException("You are not participant of this chat");
+            throw new ForbiddenException("Вы не являетесь участником этого чата");
         }
 
         return messageRepository.findAllByChatId(chatId).stream()

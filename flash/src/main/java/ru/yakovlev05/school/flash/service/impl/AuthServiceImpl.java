@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.yakovlev05.school.flash.dto.auth.*;
 import ru.yakovlev05.school.flash.entity.RefreshToken;
 import ru.yakovlev05.school.flash.entity.User;
-import ru.yakovlev05.school.flash.props.SecurityProps;
+import ru.yakovlev05.school.flash.exception.handler.ConflictException;
+import ru.yakovlev05.school.flash.exception.handler.UnauthorizedException;
 import ru.yakovlev05.school.flash.service.AuthService;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.service.UserService;
@@ -24,12 +25,11 @@ public class AuthServiceImpl implements AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final SecurityProps securityProps;
 
     @Override
     public void registration(RegistrationRequest registrationRequest) {
         if (userService.existsByUsername(registrationRequest.username())) {
-            throw new RuntimeException("Username already exists");
+            throw new ConflictException("Имя пользователя '%s' занято", registrationRequest.username());
         }
 
         User user = new User();
@@ -43,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
     public JwtResponse login(LoginRequest loginRequest) {
         User user = userService.getByUsername(loginRequest.username());
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
-            throw new RuntimeException("Incorrect password");
+            throw new UnauthorizedException("Неверный пароль");
         }
 
         String refreshToken = jwtUtil.generateRefreshToken(user);
@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
         if (!jwtUtil.validateRefreshToken(refreshTokenRequest.refreshToken())) {
-            throw new RuntimeException("Invalid refresh token");
+            throw new UnauthorizedException("Невалидный refresh token");
         }
 
         RefreshToken refreshTokenEntity = refreshTokenService.getByToken(refreshTokenRequest.refreshToken());

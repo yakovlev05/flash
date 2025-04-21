@@ -3,16 +3,17 @@ package ru.yakovlev05.school.flash.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.dto.chat.ChatResponse;
 import ru.yakovlev05.school.flash.dto.chat.CreateGroupChatRequest;
 import ru.yakovlev05.school.flash.dto.chat.CreatePrivateChatRequest;
+import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.Chat;
 import ru.yakovlev05.school.flash.entity.ChatParticipant;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.User;
+import ru.yakovlev05.school.flash.exception.handler.ConflictException;
+import ru.yakovlev05.school.flash.exception.handler.NotFoundException;
 import ru.yakovlev05.school.flash.repository.ChatRepository;
-import ru.yakovlev05.school.flash.service.ChatParticipantService;
 import ru.yakovlev05.school.flash.service.ChatService;
 import ru.yakovlev05.school.flash.service.UserService;
 
@@ -25,14 +26,13 @@ public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
 
-    private final ChatParticipantService chatParticipantService;
     private final UserService userService;
 
     @Transactional
     @Override
     public ChatResponse createPrivateChat(JwtAuthentication jwtAuthentication, CreatePrivateChatRequest createPrivateChatRequest) {
         if (jwtAuthentication.getUserId().equals(createPrivateChatRequest.userId())) {
-            throw new RuntimeException("Нельзя создать чат с самим собой");
+            throw new ConflictException("Нельзя создать чат с самим собой");
         }
 
         Chat existsChat = getPrivateChatOrNull(jwtAuthentication.getUserId(), createPrivateChatRequest.userId());
@@ -50,7 +50,7 @@ public class ChatServiceImpl implements ChatService {
         ChatParticipant recipientParticipant = createChatParticipant(chat, recipient);
 
         chat.setParticipants(List.of(senderParticipant, recipientParticipant));
-        chatRepository.save(chat);
+        save(chat);
 
         return toDto(chat);
     }
@@ -58,7 +58,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatResponse createGroupChat(JwtAuthentication jwtAuthentication, CreateGroupChatRequest createGroupChatRequest) {
         if (createGroupChatRequest.participantsId().contains(jwtAuthentication.getUserId())) {
-            throw new RuntimeException("Id создателя не нужно передавать в списке участников");
+            throw new ConflictException("Id создателя не нужно передавать в списке участников");
         }
         // Если есть невалидные id, то они будут проигнорированы
         List<User> participants = userService.getListUsersByIds(createGroupChatRequest.participantsId());
@@ -76,14 +76,18 @@ public class ChatServiceImpl implements ChatService {
         admin.setRole(ChatParticipant.Role.ADMIN);
         chat.getParticipants().add(admin);
 
-        chatRepository.save(chat);
+        save(chat);
         return toDto(chat);
     }
 
     @Override
     public Chat getById(Long chatId) {
         return chatRepository.findById(chatId)
-                .orElseThrow(() -> new RuntimeException("Чат с id " + chatId + " не найден"));
+                .orElseThrow(() -> new NotFoundException("Чат с id '%d' не найден", chatId));
+    }
+
+    private void save(Chat chat) {
+        chatRepository.save(chat);
     }
 
     private Chat getPrivateChatOrNull(Long firstUserId, Long secondUserId) {

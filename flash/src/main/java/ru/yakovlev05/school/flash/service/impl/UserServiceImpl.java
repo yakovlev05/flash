@@ -8,6 +8,7 @@ import ru.yakovlev05.school.flash.dto.user.UpdateUserRequest;
 import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.User;
+import ru.yakovlev05.school.flash.exception.handler.NotFoundException;
 import ru.yakovlev05.school.flash.repository.UserRepository;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.service.UserService;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Пользователь с логином '%s' не найден", username));
     }
 
     @Override
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(updateUserRequest.password()));
         user.setUsername(updateUserRequest.username());
 
-        userRepository.save(user);
+        save(user);
     }
 
     @Transactional
@@ -61,13 +62,13 @@ public class UserServiceImpl implements UserService {
         User user = getById(jwtAuthentication.getUserId());
         user.setDeleted(true);
         refreshTokenService.revokeAllTokens(user.getId());
-        userRepository.save(user);
+        save(user);
     }
 
     @Override
     public User getById(Long id) {
         return this.userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Пользователь с id '%d' не найден", id));
     }
 
     @Override

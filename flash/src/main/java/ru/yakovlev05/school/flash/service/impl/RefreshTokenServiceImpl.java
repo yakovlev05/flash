@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yakovlev05.school.flash.entity.RefreshToken;
 import ru.yakovlev05.school.flash.entity.User;
+import ru.yakovlev05.school.flash.exception.handler.NotFoundException;
 import ru.yakovlev05.school.flash.repository.RefreshTokenRepository;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.util.JwtUtil;
@@ -26,7 +27,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public RefreshToken getByToken(String refreshToken) {
         return refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("Refresh token not found"));
+                .orElseThrow(() -> new NotFoundException("Refresh token '%s' не найден", refreshToken));
     }
 
     @Override
