@@ -1,4 +1,9 @@
 package ru.yakovlev05.school.flash.dto.chat;
 
-public record CreatePrivateChatRequest(Long userId) {
+import jakarta.validation.constraints.NotNull;
+
+public record CreatePrivateChatRequest(
+        @NotNull
+        Long userId
+) {
 }

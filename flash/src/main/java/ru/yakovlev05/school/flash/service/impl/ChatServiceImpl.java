@@ -3,7 +3,7 @@ package ru.yakovlev05.school.flash.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yakovlev05.school.flash.dto.UserResponse;
+import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.dto.chat.ChatResponse;
 import ru.yakovlev05.school.flash.dto.chat.CreateGroupChatRequest;
 import ru.yakovlev05.school.flash.dto.chat.CreatePrivateChatRequest;

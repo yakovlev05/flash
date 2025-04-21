@@ -1,7 +1,7 @@
 package ru.yakovlev05.school.flash.service;
 
-import ru.yakovlev05.school.flash.dto.UpdateUserRequest;
-import ru.yakovlev05.school.flash.dto.UserResponse;
+import ru.yakovlev05.school.flash.dto.user.UpdateUserRequest;
+import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.User;
 

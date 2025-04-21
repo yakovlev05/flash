@@ -2,8 +2,8 @@ package ru.yakovlev05.school.flash.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yakovlev05.school.flash.dto.MessageResponse;
-import ru.yakovlev05.school.flash.dto.UserResponse;
+import ru.yakovlev05.school.flash.dto.message.MessageResponse;
+import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.Message;
 import ru.yakovlev05.school.flash.repository.MessageRepository;

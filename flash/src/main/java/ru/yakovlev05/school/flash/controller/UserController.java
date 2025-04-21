@@ -1,11 +1,12 @@
 package ru.yakovlev05.school.flash.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
-import ru.yakovlev05.school.flash.dto.UpdateUserRequest;
-import ru.yakovlev05.school.flash.dto.UserResponse;
+import ru.yakovlev05.school.flash.dto.user.UpdateUserRequest;
+import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.service.UserService;
 
@@ -25,7 +26,7 @@ public class UserController {
     @SecurityRequirement(name = "JWT")
     @PutMapping("/me")
     public void updateMyInfo(@CurrentSecurityContext(expression = "authentication") JwtAuthentication jwtAuthentication,
-                             @RequestBody UpdateUserRequest updateUserRequest) {
+                             @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         userService.updateMyInfo(jwtAuthentication, updateUserRequest);
     }
 

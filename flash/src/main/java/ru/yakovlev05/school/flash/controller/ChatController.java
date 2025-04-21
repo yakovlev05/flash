@@ -1,6 +1,7 @@
 package ru.yakovlev05.school.flash.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ public class ChatController {
     @PostMapping("/private")
     public ChatResponse createPrivateChat(
             @CurrentSecurityContext(expression = "authentication") JwtAuthentication jwtAuthentication,
-            @RequestBody CreatePrivateChatRequest createPrivateChatRequest) {
+            @Valid @RequestBody CreatePrivateChatRequest createPrivateChatRequest) {
         return chatService.createPrivateChat(jwtAuthentication, createPrivateChatRequest);
     }
 
@@ -32,7 +33,7 @@ public class ChatController {
     @PostMapping("/group")
     public ChatResponse createGroupChat(
             @CurrentSecurityContext(expression = "authentication") JwtAuthentication jwtAuthentication,
-            @RequestBody CreateGroupChatRequest createGroupChatRequest) {
+            @Valid @RequestBody CreateGroupChatRequest createGroupChatRequest) {
         return chatService.createGroupChat(jwtAuthentication, createGroupChatRequest);
     }
 

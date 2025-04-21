@@ -9,7 +9,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import ru.yakovlev05.school.flash.dto.UserResponse;
+import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.dto.message.SendMessageRequest;
 import ru.yakovlev05.school.flash.dto.message.SendMessageResponse;
 import ru.yakovlev05.school.flash.entity.Message;

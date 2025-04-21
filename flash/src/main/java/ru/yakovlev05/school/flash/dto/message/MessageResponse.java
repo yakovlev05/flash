@@ -1,4 +1,6 @@
-package ru.yakovlev05.school.flash.dto;
+package ru.yakovlev05.school.flash.dto.message;
+
+import ru.yakovlev05.school.flash.dto.user.UserResponse;
 
 import java.time.Instant;
 

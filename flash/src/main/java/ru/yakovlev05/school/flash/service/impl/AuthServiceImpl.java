@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.yakovlev05.school.flash.dto.*;
+import ru.yakovlev05.school.flash.dto.auth.*;
 import ru.yakovlev05.school.flash.entity.RefreshToken;
 import ru.yakovlev05.school.flash.entity.User;
 import ru.yakovlev05.school.flash.props.SecurityProps;

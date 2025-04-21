@@ -1,6 +1,6 @@
 package ru.yakovlev05.school.flash.service;
 
-import ru.yakovlev05.school.flash.dto.MessageResponse;
+import ru.yakovlev05.school.flash.dto.message.MessageResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.Message;
 
