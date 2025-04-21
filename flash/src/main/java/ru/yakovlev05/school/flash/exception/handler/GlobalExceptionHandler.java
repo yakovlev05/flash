@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yakovlev05.school.flash.dto.error.ErrorResponseDto;
 import ru.yakovlev05.school.flash.dto.error.ViolationConstraintDto;
+import ru.yakovlev05.school.flash.exception.ConflictException;
+import ru.yakovlev05.school.flash.exception.ForbiddenException;
+import ru.yakovlev05.school.flash.exception.NotFoundException;
+import ru.yakovlev05.school.flash.exception.UnauthorizedException;
 
 import java.time.Instant;
 

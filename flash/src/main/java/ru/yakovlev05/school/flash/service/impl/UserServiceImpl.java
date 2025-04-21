@@ -8,7 +8,7 @@ import ru.yakovlev05.school.flash.dto.user.UpdateUserRequest;
 import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.User;
-import ru.yakovlev05.school.flash.exception.handler.NotFoundException;
+import ru.yakovlev05.school.flash.exception.NotFoundException;
 import ru.yakovlev05.school.flash.repository.UserRepository;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.service.UserService;

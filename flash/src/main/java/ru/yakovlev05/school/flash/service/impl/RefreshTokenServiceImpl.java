@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yakovlev05.school.flash.entity.RefreshToken;
 import ru.yakovlev05.school.flash.entity.User;
-import ru.yakovlev05.school.flash.exception.handler.NotFoundException;
+import ru.yakovlev05.school.flash.exception.NotFoundException;
 import ru.yakovlev05.school.flash.repository.RefreshTokenRepository;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.util.JwtUtil;

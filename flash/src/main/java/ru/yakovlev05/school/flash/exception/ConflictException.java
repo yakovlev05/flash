@@ -1,4 +1,4 @@
-package ru.yakovlev05.school.flash.exception.handler;
+package ru.yakovlev05.school.flash.exception;
 
 public class ConflictException extends RuntimeException {
     public ConflictException(String message) {

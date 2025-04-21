@@ -6,7 +6,7 @@ import ru.yakovlev05.school.flash.dto.message.MessageResponse;
 import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.Message;
-import ru.yakovlev05.school.flash.exception.handler.ForbiddenException;
+import ru.yakovlev05.school.flash.exception.ForbiddenException;
 import ru.yakovlev05.school.flash.repository.MessageRepository;
 import ru.yakovlev05.school.flash.service.ChatParticipantService;
 import ru.yakovlev05.school.flash.service.MessageService;
