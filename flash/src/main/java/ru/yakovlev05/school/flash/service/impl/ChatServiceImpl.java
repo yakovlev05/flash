@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import ru.yakovlev05.school.flash.dto.chat.ChatResponse;
 import ru.yakovlev05.school.flash.dto.chat.CreateGroupChatRequest;
 import ru.yakovlev05.school.flash.dto.chat.CreatePrivateChatRequest;
-import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.Chat;
 import ru.yakovlev05.school.flash.entity.ChatParticipant;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.User;
 import ru.yakovlev05.school.flash.exception.ConflictException;
 import ru.yakovlev05.school.flash.exception.NotFoundException;
+import ru.yakovlev05.school.flash.mapper.ChatMapper;
 import ru.yakovlev05.school.flash.repository.ChatRepository;
 import ru.yakovlev05.school.flash.service.ChatService;
 import ru.yakovlev05.school.flash.service.UserService;
@@ -28,6 +28,8 @@ public class ChatServiceImpl implements ChatService {
 
     private final UserService userService;
 
+    private final ChatMapper chatMapper;
+
     @Transactional
     @Override
     public ChatResponse createPrivateChat(JwtAuthentication jwtAuthentication, CreatePrivateChatRequest createPrivateChatRequest) {
@@ -37,7 +39,7 @@ public class ChatServiceImpl implements ChatService {
 
         Chat existsChat = getPrivateChatOrNull(jwtAuthentication.getUserId(), createPrivateChatRequest.userId());
         if (existsChat != null) {
-            return toDto(existsChat);
+            return chatMapper.toDto(existsChat);
         }
 
         User sender = userService.getById(jwtAuthentication.getUserId());
@@ -52,7 +54,7 @@ public class ChatServiceImpl implements ChatService {
         chat.setParticipants(List.of(senderParticipant, recipientParticipant));
         save(chat);
 
-        return toDto(chat);
+        return chatMapper.toDto(chat);
     }
 
     @Override
@@ -77,7 +79,7 @@ public class ChatServiceImpl implements ChatService {
         chat.getParticipants().add(admin);
 
         save(chat);
-        return toDto(chat);
+        return chatMapper.toDto(chat);
     }
 
     @Override
@@ -93,17 +95,6 @@ public class ChatServiceImpl implements ChatService {
     private Chat getPrivateChatOrNull(Long firstUserId, Long secondUserId) {
         return chatRepository.findPrivateChatByParticipantsId(firstUserId, secondUserId)
                 .stream().findFirst().orElse(null);
-    }
-
-    private ChatResponse toDto(Chat chat) {
-        return new ChatResponse(
-                chat.getId(),
-                chat.getTitle(),
-                chat.getType(),
-                chat.getParticipants().stream()
-                        .map(cp -> new UserResponse(cp.getId().getUser().getUsername()))
-                        .toList()
-        );
     }
 
     private ChatParticipant createChatParticipant(Chat chat, User user) {

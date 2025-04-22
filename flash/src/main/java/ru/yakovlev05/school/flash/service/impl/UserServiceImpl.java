@@ -9,6 +9,7 @@ import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.User;
 import ru.yakovlev05.school.flash.exception.NotFoundException;
+import ru.yakovlev05.school.flash.mapper.UserMapper;
 import ru.yakovlev05.school.flash.repository.UserRepository;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.service.UserService;
@@ -22,6 +23,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final RefreshTokenService refreshTokenService;
+
+    private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -44,7 +47,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getMyInfo(JwtAuthentication jwtAuthentication) {
         User user = getById(jwtAuthentication.getUserId());
-        return new UserResponse(user.getUsername());
+        return userMapper.toDto(user);
     }
 
     @Override
