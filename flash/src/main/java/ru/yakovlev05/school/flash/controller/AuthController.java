@@ -2,6 +2,7 @@ package ru.yakovlev05.school.flash.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +23,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public JwtResponse login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);
-    }
-
-    @PostMapping("/refresh-token")
-    public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-        return authService.refreshToken(refreshTokenRequest);
     }
 
     @PostMapping("/logout")

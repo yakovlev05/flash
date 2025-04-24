@@ -1,14 +1,22 @@
 package ru.yakovlev05.school.flash.service.impl;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.yakovlev05.school.flash.dto.auth.*;
+import ru.yakovlev05.school.flash.dto.auth.LoginRequest;
+import ru.yakovlev05.school.flash.dto.auth.LogoutRequest;
+import ru.yakovlev05.school.flash.dto.auth.RegistrationRequest;
 import ru.yakovlev05.school.flash.entity.RefreshToken;
 import ru.yakovlev05.school.flash.entity.User;
 import ru.yakovlev05.school.flash.exception.ConflictException;
 import ru.yakovlev05.school.flash.exception.UnauthorizedException;
+import ru.yakovlev05.school.flash.props.SecurityProps;
 import ru.yakovlev05.school.flash.service.AuthService;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.service.UserService;
@@ -25,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final SecurityProps securityProps;
 
     @Override
     public void registration(RegistrationRequest registrationRequest) {
@@ -40,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public JwtResponse login(LoginRequest loginRequest) {
+    public ResponseEntity<Void> login(LoginRequest loginRequest) {
         User user = userService.getByUsername(loginRequest.username());
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
             throw new UnauthorizedException("Неверный пароль");
@@ -50,39 +59,76 @@ public class AuthServiceImpl implements AuthService {
         Date refreshTokenExpiredAt = jwtUtil.getRefreshClaims(refreshToken).getExpiration();
         refreshTokenService.save(refreshToken, user, refreshTokenExpiredAt);
 
-        return new JwtResponse(
-                jwtUtil.generateAccessToken(user),
-                refreshToken,
-                refreshTokenExpiredAt.toInstant().getEpochSecond()
-        );
-    }
+        // Подробнее о параметрах cookie https://developer.mozilla.org/ru/docs/Web/HTTP/Guides/Cookies
+        ResponseCookie accessTokenCookie = ResponseCookie.from("access-token") // Сессионная
+                .value(jwtUtil.generateAccessToken(user))
+                .httpOnly(true)
+                .sameSite("Strict")
+                .secure(true)
+                .path("/")
+                .build();
 
-    @Transactional
-    @Override
-    public JwtResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
-        if (!jwtUtil.validateRefreshToken(refreshTokenRequest.refreshToken())) {
-            throw new UnauthorizedException("Невалидный refresh token");
-        }
+        ResponseCookie refreshCookie = ResponseCookie.from("refresh-token")
+                .value(jwtUtil.generateRefreshToken(user))
+                .httpOnly(true)
+                .maxAge(securityProps.getRefreshTokenLifeTime())
+                .sameSite("Strict")
+                .secure(true)
+                .path("/")
+                .build();
 
-        RefreshToken refreshTokenEntity = refreshTokenService.getByToken(refreshTokenRequest.refreshToken());
-
-        refreshTokenService.delete(refreshTokenEntity);
-
-        String refreshToken = jwtUtil.generateRefreshToken(refreshTokenEntity.getUser());
-        Date refreshTokenExpiredAt = jwtUtil.getRefreshClaims(refreshToken).getExpiration();
-        refreshTokenService.save(refreshToken, refreshTokenEntity.getUser(), refreshTokenExpiredAt);
-
-
-        return new JwtResponse(
-                jwtUtil.generateAccessToken(refreshTokenEntity.getUser()),
-                refreshToken,
-                refreshTokenExpiredAt.toInstant().getEpochSecond()
-        );
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshCookie.toString())
+                .build();
     }
 
     @Override
     public void logout(LogoutRequest logoutRequest) {
         RefreshToken refreshToken = refreshTokenService.getByToken(logoutRequest.refreshToken());
         refreshTokenService.delete(refreshToken);
+    }
+
+    /**
+     * Обновление токена
+     * @param validatedRefreshToken refresh токен, уже валидированный
+     * @param response http запрос
+     * @return access token
+     */
+    @Transactional
+    @Override
+    public String refreshToken(String validatedRefreshToken, HttpServletResponse response) {
+        RefreshToken validatedRefreshTokenEntity = refreshTokenService.getByToken(validatedRefreshToken);
+        refreshTokenService.delete(validatedRefreshTokenEntity);
+
+        Long userId = Long.parseLong(jwtUtil.getRefreshClaims(validatedRefreshToken).getSubject());
+        User user = userService.getById(userId);
+
+        String newRefreshToken = jwtUtil.generateRefreshToken(user);
+        String newAccessToken = jwtUtil.generateAccessToken(user);
+
+        RefreshToken newRefreshTokenEntity = new RefreshToken();
+        newRefreshTokenEntity.setToken(newRefreshToken);
+        newRefreshTokenEntity.setUser(user);
+
+        refreshTokenService.save(newRefreshTokenEntity);
+
+        // Отправка cookie
+        Cookie refreshTokenCookie = new Cookie("refresh-token", newRefreshToken);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge(securityProps.getRefreshTokenLifeTime().intValue());
+        refreshTokenCookie.setAttribute("SameSite", "Strict");
+        refreshTokenCookie.setSecure(true);
+
+        Cookie accessTokenCookie = new Cookie("access-token", newAccessToken);
+        refreshTokenCookie.setPath("/");
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setAttribute("SameSite", "Strict");
+        accessTokenCookie.setSecure(true);
+
+        response.addCookie(refreshTokenCookie);
+        response.addCookie(accessTokenCookie);
+
+        return newAccessToken;
     }
 }

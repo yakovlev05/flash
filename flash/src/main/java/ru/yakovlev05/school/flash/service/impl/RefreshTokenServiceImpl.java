@@ -7,7 +7,6 @@ import ru.yakovlev05.school.flash.entity.User;
 import ru.yakovlev05.school.flash.exception.NotFoundException;
 import ru.yakovlev05.school.flash.repository.RefreshTokenRepository;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
-import ru.yakovlev05.school.flash.util.JwtUtil;
 
 import java.util.Date;
 
@@ -16,8 +15,6 @@ import java.util.Date;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-
-    private final JwtUtil jwtUtil;
 
     @Override
     public void save(RefreshToken refreshTokenEntity) {
