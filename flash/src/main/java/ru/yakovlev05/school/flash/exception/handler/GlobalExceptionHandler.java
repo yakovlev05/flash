@@ -1,5 +1,6 @@
 package ru.yakovlev05.school.flash.exception.handler;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ import java.time.Instant;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    //    @Hidden // Чтобы в сваггере не отображался как вариант ответа
+    @Hidden // Чтобы в сваггере не отображался как вариант ответа
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(produces = MediaType.APPLICATION_JSON_VALUE)
     public ErrorResponseDto handleException(Exception ex, HttpServletRequest request) {
@@ -35,6 +36,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @Hidden
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResponseDto handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
@@ -49,6 +51,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @Hidden
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     public ErrorResponseDto handleNotFoundException(NotFoundException ex, HttpServletRequest request) {
@@ -61,6 +64,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @Hidden
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler
     public ErrorResponseDto handleForbiddenException(ForbiddenException ex, HttpServletRequest request) {
@@ -73,6 +77,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @Hidden
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler
     public ErrorResponseDto handleConflictException(ConflictException ex, HttpServletRequest request) {
@@ -85,6 +90,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @Hidden
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler
     public ErrorResponseDto handleUnauthorizedException(UnauthorizedException ex, HttpServletRequest request) {

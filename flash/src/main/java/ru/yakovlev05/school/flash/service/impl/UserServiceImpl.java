@@ -79,4 +79,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByIdIn(ids);
     }
 
+    @Override
+    public boolean existsByUserId(Long userId) {
+        return userRepository.existsById(userId);
+    }
+
 }

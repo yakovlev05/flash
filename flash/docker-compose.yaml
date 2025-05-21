@@ -2,6 +2,7 @@ name: flash
 
 volumes:
   postgres:
+  redis:
 
 
 services:
@@ -16,3 +17,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:8.0.1
+    restart: unless-stopped
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-password} # логин - default
+    ports:
+      - '6379:6379'
