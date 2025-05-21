@@ -1,6 +1,8 @@
 package ru.yakovlev05.school.flash.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -14,6 +16,7 @@ import ru.yakovlev05.school.flash.dto.chat.CreatePrivateChatRequest;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.service.ChatService;
 
+@Tag(name = "Чаты", description = "API управления чатами")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/chats")
@@ -21,6 +24,7 @@ public class ChatController {
 
     private final ChatService chatService;
 
+    @Operation(summary = "Создать приватный чат")
     @SecurityRequirement(name = "JWT")
     @PostMapping("/private")
     public ChatResponse createPrivateChat(
@@ -29,6 +33,7 @@ public class ChatController {
         return chatService.createPrivateChat(jwtAuthentication, createPrivateChatRequest);
     }
 
+    @Operation(summary = "Создать групповой чат")
     @SecurityRequirement(name = "JWT")
     @PostMapping("/group")
     public ChatResponse createGroupChat(
