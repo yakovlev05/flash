@@ -2,17 +2,15 @@ package ru.yakovlev05.school.flash.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -24,6 +22,8 @@ public class User {
     private String username;
 
     private String password;
+
+    private String email;
 
     private boolean isDeleted = false;
 

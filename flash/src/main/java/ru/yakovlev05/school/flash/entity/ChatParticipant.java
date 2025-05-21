@@ -1,15 +1,16 @@
 package ru.yakovlev05.school.flash.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "chat_participants")
 public class ChatParticipant {
@@ -29,9 +30,7 @@ public class ChatParticipant {
 
     @AllArgsConstructor
     @NoArgsConstructor
-    @Getter
-    @Setter
-    @EqualsAndHashCode
+    @Data
     @Embeddable
     public static class CompositeId {
         @ManyToOne

@@ -8,7 +8,7 @@ import ru.yakovlev05.school.flash.entity.User;
 public class UserMapper {
 
     public UserResponse toDto(User user) {
-        return new UserResponse(user.getUsername());
+        return new UserResponse(user.getUsername(), user.getEmail());
     }
 
 }

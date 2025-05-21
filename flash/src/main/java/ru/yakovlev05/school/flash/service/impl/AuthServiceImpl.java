@@ -44,6 +44,7 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setUsername(registrationRequest.username());
         user.setPassword(passwordEncoder.encode(registrationRequest.password()));
+        user.setEmail(registrationRequest.email());
 
         userService.save(user);
     }
@@ -90,8 +91,9 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * Обновление токена
+     *
      * @param validatedRefreshToken refresh токен, уже валидированный
-     * @param response http запрос
+     * @param response              http запрос
      * @return access token
      */
     @Transactional

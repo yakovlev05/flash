@@ -1,6 +1,7 @@
 package ru.yakovlev05.school.flash.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import ru.yakovlev05.school.flash.validation.BannedUsernames;
@@ -11,6 +12,10 @@ public record RegistrationRequest(
         @BannedUsernames
         @Size(min = 4, message = "длина имени пользователя должна быть не менее 4")
         String username,
+
+        @Schema(description = "Email пользователя", example = "andrey@mail.ru")
+        @Email
+        String email,
 
         @Schema(description = "Пароль", example = "#MyPassword")
         @Pattern(regexp = ".*[~@\"#№$;%^:&?*()<>/+=-_{}\\[\\]].*",

@@ -8,7 +8,7 @@ import ru.yakovlev05.school.flash.entity.ChatParticipant;
 public class ChatParticipantMapper {
 
     public UserResponse toDto(ChatParticipant chatParticipant) {
-        return new UserResponse(chatParticipant.getId().getUser().getUsername());
+        return new UserResponse(chatParticipant.getId().getUser().getUsername(), chatParticipant.getId().getUser().getEmail());
     }
 
 }

@@ -5,6 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Информация о пользователе")
 public record UserResponse(
         @Schema(description = "Имя пользователя", example = "andrey")
-        String username
+        String username,
+
+        @Schema(description = "Email пользователя", example = "andrey")
+        String email
 ){
 }

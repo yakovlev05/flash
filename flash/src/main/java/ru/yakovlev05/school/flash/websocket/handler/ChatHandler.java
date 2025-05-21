@@ -64,7 +64,7 @@ public class ChatHandler extends TextWebSocketHandler {
     private SendMessageResponse toDto(Message message) {
         return new SendMessageResponse(
                 message.getId(),
-                new UserResponse(message.getSender().getUsername()),
+                new UserResponse(message.getSender().getUsername(), message.getSender().getEmail()),
                 message.getText(),
                 message.getSentAt()
         );
