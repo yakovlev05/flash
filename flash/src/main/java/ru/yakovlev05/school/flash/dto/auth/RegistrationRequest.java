@@ -2,9 +2,11 @@ package ru.yakovlev05.school.flash.dto.auth;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import ru.yakovlev05.school.flash.validation.BannedUsernames;
 
 public record RegistrationRequest(
-        @Size(min = 5, message = "длина имени пользователя должна быть не менее 5")
+        @BannedUsernames
+        @Size(min = 4, message = "длина имени пользователя должна быть не менее 4")
         String username,
 
         @Pattern(regexp = ".*[~@\"#№$;%^:&?*()<>/+=-_{}\\[\\]].*",
