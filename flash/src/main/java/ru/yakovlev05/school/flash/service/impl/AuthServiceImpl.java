@@ -4,9 +4,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.yakovlev05.school.flash.dto.auth.LoginRequest;
@@ -16,77 +13,61 @@ import ru.yakovlev05.school.flash.entity.RefreshToken;
 import ru.yakovlev05.school.flash.entity.User;
 import ru.yakovlev05.school.flash.exception.ConflictException;
 import ru.yakovlev05.school.flash.exception.UnauthorizedException;
+import ru.yakovlev05.school.flash.mapper.UserMapper;
 import ru.yakovlev05.school.flash.props.SecurityProps;
 import ru.yakovlev05.school.flash.service.AuthService;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.service.UserService;
 import ru.yakovlev05.school.flash.util.JwtUtil;
 
-import java.util.Date;
-
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
 
     private final UserService userService;
+    private final UserMapper userMapper;
     private final RefreshTokenService refreshTokenService;
 
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final SecurityProps securityProps;
 
+    @Transactional
     @Override
     public void registration(RegistrationRequest registrationRequest) {
         if (userService.existsByUsername(registrationRequest.username())) {
             throw new ConflictException("Имя пользователя '%s' занято", registrationRequest.username());
         }
 
-        User user = new User();
-        user.setUsername(registrationRequest.username());
+        User user = userMapper.toEntity(registrationRequest);
         user.setPassword(passwordEncoder.encode(registrationRequest.password()));
-        user.setEmail(registrationRequest.email());
 
         userService.save(user);
     }
 
+    @Transactional
     @Override
-    public ResponseEntity<Void> login(LoginRequest loginRequest) {
+    public void login(LoginRequest loginRequest, HttpServletResponse response) {
         User user = userService.getByUsername(loginRequest.username());
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
             throw new UnauthorizedException("Неверный пароль");
         }
 
         String refreshToken = jwtUtil.generateRefreshToken(user);
-        Date refreshTokenExpiredAt = jwtUtil.getRefreshClaims(refreshToken).getExpiration();
-        refreshTokenService.save(refreshToken, user, refreshTokenExpiredAt);
 
-        // Подробнее о параметрах cookie https://developer.mozilla.org/ru/docs/Web/HTTP/Guides/Cookies
-        ResponseCookie accessTokenCookie = ResponseCookie.from("access-token") // Сессионная
-                .value(jwtUtil.generateAccessToken(user))
-                .httpOnly(true)
-                .sameSite("Strict")
-                .secure(true)
-                .path("/")
-                .build();
+        RefreshToken refreshTokenEntity = new RefreshToken();
+        refreshTokenEntity.setToken(refreshToken);
+        refreshTokenEntity.setUser(user);
+        refreshTokenService.save(refreshTokenEntity);
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh-token")
-                .value(jwtUtil.generateRefreshToken(user))
-                .httpOnly(true)
-                .maxAge(securityProps.getRefreshTokenLifeTime())
-                .sameSite("Strict")
-                .secure(true)
-                .path("/")
-                .build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString(), refreshCookie.toString())
-                .build();
+        setCookie("refresh-token", refreshToken, securityProps.getRefreshTokenLifeTime(), response);
+        setCookie("access-token", jwtUtil.generateAccessToken(user), securityProps.getAccessTokenLifeTime(), response);
     }
 
+    @Transactional
     @Override
     public void logout(LogoutRequest logoutRequest) {
-        RefreshToken refreshToken = refreshTokenService.getByToken(logoutRequest.refreshToken());
-        refreshTokenService.delete(refreshToken);
+        refreshTokenService.removeByToken(logoutRequest.refreshToken());
     }
 
     /**
@@ -99,8 +80,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public String refreshToken(String validatedRefreshToken, HttpServletResponse response) {
-        RefreshToken validatedRefreshTokenEntity = refreshTokenService.getByToken(validatedRefreshToken);
-        refreshTokenService.delete(validatedRefreshTokenEntity);
+        refreshTokenService.removeByToken(validatedRefreshToken);
 
         Long userId = Long.parseLong(jwtUtil.getRefreshClaims(validatedRefreshToken).getSubject());
         User user = userService.getById(userId);
@@ -114,23 +94,21 @@ public class AuthServiceImpl implements AuthService {
 
         refreshTokenService.save(newRefreshTokenEntity);
 
-        // Отправка cookie
-        Cookie refreshTokenCookie = new Cookie("refresh-token", newRefreshToken);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge(securityProps.getRefreshTokenLifeTime().intValue());
-        refreshTokenCookie.setAttribute("SameSite", "Strict");
-        refreshTokenCookie.setSecure(true);
-
-        Cookie accessTokenCookie = new Cookie("access-token", newAccessToken);
-        refreshTokenCookie.setPath("/");
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setAttribute("SameSite", "Strict");
-        accessTokenCookie.setSecure(true);
-
-        response.addCookie(refreshTokenCookie);
-        response.addCookie(accessTokenCookie);
+        setCookie("refresh-token", newRefreshToken, securityProps.getRefreshTokenLifeTime(), response);
+        setCookie("access-token", newAccessToken, securityProps.getAccessTokenLifeTime(), response);
 
         return newAccessToken;
+    }
+
+    private void setCookie(String cookieName, String token, Long maxAge, HttpServletResponse response) {
+        // Подробнее о параметрах cookie https://developer.mozilla.org/ru/docs/Web/HTTP/Guides/Cookies
+        Cookie cookie = new Cookie(cookieName, token);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(maxAge.intValue());
+        cookie.setAttribute("SameSite", "Strict");
+        cookie.setSecure(true);
+
+        response.addCookie(cookie);
     }
 }

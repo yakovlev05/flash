@@ -10,9 +10,7 @@ public interface RefreshTokenService {
 
     RefreshToken getByToken(String refreshToken);
 
-    void delete(RefreshToken refreshToken);
-
-    void save(String refreshToken, User user, Date expiredAt);
-
     void revokeAllTokens(Long userId);
+
+    void removeByToken(String refreshToken);
 }

@@ -1,13 +1,14 @@
 package ru.yakovlev05.school.flash.service;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ResponseEntity;
-import ru.yakovlev05.school.flash.dto.auth.*;
+import ru.yakovlev05.school.flash.dto.auth.LoginRequest;
+import ru.yakovlev05.school.flash.dto.auth.LogoutRequest;
+import ru.yakovlev05.school.flash.dto.auth.RegistrationRequest;
 
 public interface AuthService {
     void registration(RegistrationRequest registrationRequest);
 
-    ResponseEntity<Void> login(LoginRequest loginRequest);
+    void login(LoginRequest loginRequest, HttpServletResponse response);
 
     void logout(LogoutRequest logoutRequest);
 

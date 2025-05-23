@@ -2,6 +2,7 @@ package ru.yakovlev05.school.flash.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +29,10 @@ public class AuthController {
         authService.registration(registrationRequest);
     }
 
-    @Operation(summary = "Войти в аккаунт")
+    @Operation(summary = "Войти в аккаунт (токены в куках)")
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
+    public void login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        authService.login(loginRequest, response);
     }
 
     @Operation(summary = "Удалить текущую сессию")
