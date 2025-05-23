@@ -1,3 +1,28 @@
 spring:
   application:
     name: flash-notification
+
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+
+  mail:
+    host: ${MAIL_HOST:smtp.mail.ru}
+    port: ${MAIL_PORT:465}
+    protocol: ${MAIL_PROTOCOL:smtp}
+    username: ${MAIL_USERNAME:SET_LOGIN}
+    password: ${MAIL_PASSWORD:SET_PASS}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+
+server:
+  port: 8082
+
+kafka:
+  consumer:
+    notification:
+      topic: notification.send
+      group-id: notification-email
+
+service:
+  name: flash
