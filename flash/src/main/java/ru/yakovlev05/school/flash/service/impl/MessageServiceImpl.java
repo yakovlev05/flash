@@ -7,6 +7,7 @@ import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.Message;
 import ru.yakovlev05.school.flash.exception.ForbiddenException;
 import ru.yakovlev05.school.flash.mapper.MessageMapper;
+import ru.yakovlev05.school.flash.metric.CountByDate;
 import ru.yakovlev05.school.flash.repository.MessageRepository;
 import ru.yakovlev05.school.flash.service.ChatParticipantService;
 import ru.yakovlev05.school.flash.service.MessageService;
@@ -36,6 +37,7 @@ public class MessageServiceImpl implements MessageService {
                 .toList();
     }
 
+    @CountByDate(name = "messages")
     @Override
     public void save(Message messageEntity) {
         messageRepository.save(messageEntity);

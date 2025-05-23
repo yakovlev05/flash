@@ -40,4 +40,10 @@ public class SessionStorage {
 
         return sessionStorage.get(chatId);
     }
+
+    public Integer countSessions() {
+        return sessionStorage.values().stream()
+                .mapToInt(Set::size)
+                .sum();
+    }
 }

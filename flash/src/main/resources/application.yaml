@@ -18,6 +18,11 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
 security:
   jwt:
