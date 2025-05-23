@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 @Schema(description = "Создать приватный (личный) чат")
 public record CreatePrivateChatRequest(
 
-        @Schema(description = "id собеседника", example = "1")
+        @Schema(description = "messageId собеседника", example = "1")
         @NotNull
         Long userId
 ) {

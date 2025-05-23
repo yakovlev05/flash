@@ -8,7 +8,7 @@ import java.util.List;
 
 @Schema(description = "Информация о чате")
 public record ChatResponse(
-        @Schema(description = "id чата", example = "1")
+        @Schema(description = "messageId чата", example = "1")
         Long id,
 
         @Schema(description = "Название чата", example = "Андрей")

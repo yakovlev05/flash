@@ -7,10 +7,10 @@ import java.time.Instant;
 
 @Schema(description = "Информация о сообщении")
 public record MessageResponse(
-        @Schema(description = "id сообщения", examples = "1")
+        @Schema(description = "messageId сообщения", examples = "1")
         Long id,
 
-        @Schema(description = "id чата", example = "5")
+        @Schema(description = "messageId чата", example = "5")
         Long chatId,
 
         @Schema(description = "Информация об отправителе")

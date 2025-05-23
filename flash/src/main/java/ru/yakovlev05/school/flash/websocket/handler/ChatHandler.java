@@ -3,16 +3,18 @@ package ru.yakovlev05.school.flash.websocket.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.dto.message.SendMessageRequest;
 import ru.yakovlev05.school.flash.dto.message.SendMessageResponse;
+import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.Message;
+import ru.yakovlev05.school.flash.eventlistener.event.MessageCreatedEvent;
 import ru.yakovlev05.school.flash.service.ChatService;
 import ru.yakovlev05.school.flash.service.MessageService;
 import ru.yakovlev05.school.flash.service.UserService;
@@ -33,6 +35,8 @@ public class ChatHandler extends TextWebSocketHandler {
     private final UserService userService;
 
     private final ObjectMapper objectMapper;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -58,6 +62,14 @@ public class ChatHandler extends TextWebSocketHandler {
 
         messageService.save(messageEntity);
 
+        applicationEventPublisher.publishEvent(
+                new MessageCreatedEvent(
+                        messageEntity.getId(),
+                        userId,
+                        messageEntity.getText()
+                )
+        );
+
         sendMessages(toDto(messageEntity), session, chatId);
     }
 
@@ -82,7 +94,7 @@ public class ChatHandler extends TextWebSocketHandler {
                     try {
                         session.sendMessage(message);
                     } catch (IOException e) {
-                        log.info("Unable to send message, session id: {}, chatId: {}", session.getId(), chatId);
+                        log.info("Unable to send message, session messageId: {}, chatId: {}", session.getId(), chatId);
                         sessions.remove(session);
                     }
                 });

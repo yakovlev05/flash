@@ -12,7 +12,7 @@ public record CreateGroupChatRequest(
         @NotBlank(message = "название чата не может быть пустым")
         String title,
 
-        @Schema(description = "Список id участников чата", example = "[1, 2, 3]")
+        @Schema(description = "Список messageId участников чата", example = "[1, 2, 3]")
         @NotNull
         List<Long> participantsId
 ) {

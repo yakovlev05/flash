@@ -62,7 +62,7 @@ public class ChatServiceImpl implements ChatService {
         if (createGroupChatRequest.participantsId().contains(jwtAuthentication.getUserId())) {
             throw new ConflictException("Id создателя не нужно передавать в списке участников");
         }
-        // Если есть невалидные id, то они будут проигнорированы
+        // Если есть невалидные messageId, то они будут проигнорированы
         List<User> participants = userService.getListUsersByIds(createGroupChatRequest.participantsId());
 
         Chat chat = new Chat();
@@ -85,7 +85,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Chat getById(Long chatId) {
         return chatRepository.findById(chatId)
-                .orElseThrow(() -> new NotFoundException("Чат с id '%d' не найден", chatId));
+                .orElseThrow(() -> new NotFoundException("Чат с messageId '%d' не найден", chatId));
     }
 
     private void save(Chat chat) {
