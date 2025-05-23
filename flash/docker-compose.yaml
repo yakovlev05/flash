@@ -66,3 +66,18 @@ services:
       - kafka
     networks:
       - common
+
+  notification:
+    build:
+      context: ../flash-notification
+      dockerfile: Dockerfile
+    environment:
+      - MAIL_USERNAME=${MAIL_USERNAME:-SET_LOGIN}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-SET_PASS}
+      - KAFKA_SERVERS=kafka:19092
+    #    ports:
+    #      - '8082:8082'
+    depends_on:
+      - kafka
+    networks:
+      - common
