@@ -16,7 +16,6 @@ import ru.yakovlev05.school.flash.dto.message.SendMessageResponse;
 import ru.yakovlev05.school.flash.dto.user.UserResponse;
 import ru.yakovlev05.school.flash.entity.Message;
 import ru.yakovlev05.school.flash.eventlistener.event.MessageCreatedEvent;
-import ru.yakovlev05.school.flash.metric.CountByDate;
 import ru.yakovlev05.school.flash.service.ChatService;
 import ru.yakovlev05.school.flash.service.MessageService;
 import ru.yakovlev05.school.flash.service.UserService;
@@ -79,7 +78,7 @@ public class ChatHandler extends TextWebSocketHandler {
     private SendMessageResponse toDto(Message message) {
         return new SendMessageResponse(
                 message.getId(),
-                new UserResponse(message.getSender().getUsername(), message.getSender().getEmail()),
+                new UserResponse(message.getSender().getId(), message.getSender().getUsername(), message.getSender().getEmail()),
                 message.getText(),
                 message.getSentAt()
         );

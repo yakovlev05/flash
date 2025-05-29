@@ -9,10 +9,10 @@ import ru.yakovlev05.school.flash.entity.User;
 public class UserMapper {
 
     public UserResponse toDto(User user) {
-        return new UserResponse(user.getUsername(), user.getEmail());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
     }
 
-    public User toEntity(RegistrationRequest dto){
+    public User toEntity(RegistrationRequest dto) {
         User user = new User();
         user.setEmail(dto.email());
         user.setUsername(dto.username());
