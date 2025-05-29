@@ -7,9 +7,9 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import ru.yakovlev05.school.flash.entity.JwtAuthentication;
 import ru.yakovlev05.school.flash.entity.User;
 import ru.yakovlev05.school.flash.props.SecurityProps;
+import ru.yakovlev05.school.flash.service.JwtAuthenticationService;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -20,6 +20,7 @@ import java.util.Map;
 public class JwtUtil {
 
     private final SecurityProps props;
+    private final JwtAuthenticationService jwtAuthenticationService;
 
     private SecretKey getSignKey(String key) {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
@@ -93,8 +94,6 @@ public class JwtUtil {
 
     public Authentication getAuthentication(String accessToken) {
         Claims claims = getAccessClaims(accessToken);
-        JwtAuthentication authentication = new JwtAuthentication();
-        authentication.setUserId(Long.parseLong(claims.getSubject()));
-        return authentication;
+        return jwtAuthenticationService.getJwtAuthentication(Long.parseLong(claims.getSubject()));
     }
 }

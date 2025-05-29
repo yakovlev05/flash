@@ -27,6 +27,8 @@ public class User {
 
     private boolean isDeleted = false;
 
+    private Role role = Role.ROLE_USER;
+
     @OneToMany(mappedBy = "sender")
     private List<Message> messages = new ArrayList<>();
 
@@ -35,4 +37,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<RefreshToken> refreshTokens = new ArrayList<>();
+
+    public enum Role {
+        ROLE_USER, ROLE_MODERATOR
+    }
 }

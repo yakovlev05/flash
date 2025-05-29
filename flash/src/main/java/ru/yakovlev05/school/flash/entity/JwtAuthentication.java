@@ -14,10 +14,11 @@ public class JwtAuthentication implements Authentication {
 
     private Long userId;
     private boolean authenticated;
+    private List<GrantedAuthority> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return authorities;
     }
 
     @Override

@@ -36,7 +36,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if (accessToken != null && jwtUtil.validateAccessToken(accessToken)) {
 
             Authentication authentication = jwtUtil.getAuthentication(accessToken);
-            authentication.setAuthenticated(true);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } else {
@@ -46,7 +45,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 String newAccessToken = authService.refreshToken(refreshToken, response);
 
                 Authentication authentication = jwtUtil.getAuthentication(newAccessToken);
-                authentication.setAuthenticated(true);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
