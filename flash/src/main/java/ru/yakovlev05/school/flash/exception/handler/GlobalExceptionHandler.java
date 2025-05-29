@@ -2,6 +2,7 @@ package ru.yakovlev05.school.flash.exception.handler;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,6 +48,21 @@ public class GlobalExceptionHandler {
                 request.getServletPath(),
                 ex.getBindingResult().getFieldErrors().stream()
                         .map(error -> new ViolationConstraintDto(error.getField(), error.getDefaultMessage()))
+                        .toList()
+        );
+    }
+
+    @Hidden
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResponseDto handleConstraintViolationException(ConstraintViolationException ex, HttpServletRequest request) {
+        return new ErrorResponseDto(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Входные данные не соответствуют заданным ограничениям",
+                request.getServletPath(),
+                ex.getConstraintViolations().stream()
+                        .map(error -> new ViolationConstraintDto(error.getPropertyPath().toString(), error.getMessage()))
                         .toList()
         );
     }

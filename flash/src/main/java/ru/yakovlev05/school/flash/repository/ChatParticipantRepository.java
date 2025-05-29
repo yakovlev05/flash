@@ -10,4 +10,6 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
             WHERE cp.id.chat.id = :chatId AND cp.id.user.id = :userId
             """)
     boolean isChatParticipant(Long chatId, Long userId);
+
+    void removeById_Chat_Id(Long chatId);
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -49,6 +50,7 @@ public class ChatHandler extends TextWebSocketHandler {
         sessionStorage.removeSession((Long) session.getAttributes().get("chatId"), session);
     }
 
+    @Transactional
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         Long chatId = (Long) session.getAttributes().get("chatId");
