@@ -34,11 +34,4 @@ public class UserController {
                              @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         userService.updateMyInfo(jwtAuthentication, updateUserRequest);
     }
-
-    @Operation(summary = "Удалить свой аккаунт")
-    @SecurityRequirement(name = "JWT")
-    @DeleteMapping("/me")
-    public void deleteMyUser(@CurrentSecurityContext(expression = "authentication") JwtAuthentication jwtAuthentication){
-        userService.deleteMyUser(jwtAuthentication);
-    }
 }
