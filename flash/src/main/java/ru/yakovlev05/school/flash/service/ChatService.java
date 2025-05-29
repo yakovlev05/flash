@@ -1,5 +1,6 @@
 package ru.yakovlev05.school.flash.service;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import ru.yakovlev05.school.flash.dto.chat.ChatResponse;
 import ru.yakovlev05.school.flash.dto.chat.CreateGroupChatRequest;
@@ -19,4 +20,8 @@ public interface ChatService {
     List<ChatResponse> getMyListChat(JwtAuthentication jwtAuthentication, Integer page, Integer limit);
 
     void deleteMyChat(JwtAuthentication jwtAuthentication, Long chatId);
+
+    List<ChatResponse> getListChats(Integer page, Integer limit);
+
+    void deleteChatById(Long chatId);
 }

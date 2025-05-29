@@ -14,4 +14,8 @@ public interface MessageService {
     void deleteMyMessage(JwtAuthentication jwtAuthentication, Long messageId);
 
     void deleteMessagesByChatId(Long chatId);
+
+    List<MessageResponse> getListMessages(Long chatId, Integer page, Integer limit);
+
+    void deleteMessageById(Long messageId);
 }

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yakovlev05.school.flash.dto.message.MessageResponse;
 import ru.yakovlev05.school.flash.entity.JwtAuthentication;
@@ -14,6 +15,7 @@ import ru.yakovlev05.school.flash.service.MessageService;
 
 import java.util.List;
 
+@Validated
 @Tag(name = "Сообщения", description = "API работы с сообщениями")
 @RequiredArgsConstructor
 @RestController

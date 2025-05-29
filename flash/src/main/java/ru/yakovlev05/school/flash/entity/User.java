@@ -27,6 +27,7 @@ public class User {
 
     private boolean isDeleted = false;
 
+    @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER;
 
     @OneToMany(mappedBy = "sender")

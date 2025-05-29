@@ -118,6 +118,22 @@ public class ChatServiceImpl implements ChatService {
         delete(chat);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<ChatResponse> getListChats(Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page, limit, Sort.by("id"));
+        return getAllChats(pageable).stream()
+                .map(chatMapper::toDto)
+                .toList();
+    }
+
+    @Transactional
+    @Override
+    public void deleteChatById(Long chatId) {
+        Chat chat = getById(chatId);
+        delete(chat);
+    }
+
     private void save(Chat chat) {
         chatRepository.save(chat);
     }
@@ -147,5 +163,9 @@ public class ChatServiceImpl implements ChatService {
     private boolean isCreatorForGroupChat(Chat chat, Long userId) {
         return chat.getParticipants().stream()
                 .anyMatch(participant -> participant.getId().getUser().getId().equals(userId));
+    }
+
+    private List<Chat> getAllChats(Pageable pageable) {
+        return chatRepository.findAll(pageable).getContent();
     }
 }

@@ -35,7 +35,7 @@ public class MessageServiceImpl implements MessageService {
         ensureUserHasAccessToChat(jwtAuthentication, chatId);
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by("sentAt"));
-        return messageRepository.findAllByChatId(chatId, pageable).stream()
+        return getAllByChatId(chatId, pageable).stream()
                 .sorted(Comparator.comparingLong(Message::getId))
                 .map(messageMapper::toDto)
                 .toList();
@@ -59,8 +59,24 @@ public class MessageServiceImpl implements MessageService {
         messageRepository.removeAllByChatId(chatId);
     }
 
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<MessageResponse> getListMessages(Long chatId, Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page, limit, Sort.by("sentAt"));
+        return getAllByChatId(chatId, pageable).stream()
+                .map(messageMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public void deleteMessageById(Long messageId) {
+        Message message = getById(messageId);
+        delete(message);
+    }
+
     private void ensureUserHasAccessToChat(JwtAuthentication jwtAuthentication, Long chatId) {
-        if (!chatParticipantService.isUserParticipant(chatId, jwtAuthentication.getUserId())) {
+        if (!chatParticipantService.isUserParticipant(jwtAuthentication.getUserId(), chatId)) {
             throw new ForbiddenException("Вы не являетесь участником этого чата");
         }
     }
@@ -72,5 +88,14 @@ public class MessageServiceImpl implements MessageService {
 
     private void delete(Message message) {
         messageRepository.delete(message);
+    }
+
+    private List<Message> getAllByChatId(Long chatId, Pageable pageable) {
+        return messageRepository.findAllByChatId(chatId, pageable);
+    }
+
+    private Message getById(Long messageId) {
+        return messageRepository.findById(messageId)
+                .orElseThrow(() -> new NotFoundException("Сообщение с id '%d' не найдено", messageId));
     }
 }
