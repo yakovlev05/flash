@@ -1,13 +1,13 @@
 package ru.yakovlev05.school.flash.service.impl;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.yakovlev05.school.flash.dto.auth.LoginRequest;
-import ru.yakovlev05.school.flash.dto.auth.LogoutRequest;
 import ru.yakovlev05.school.flash.dto.auth.RegistrationRequest;
 import ru.yakovlev05.school.flash.entity.RefreshToken;
 import ru.yakovlev05.school.flash.entity.User;
@@ -19,6 +19,8 @@ import ru.yakovlev05.school.flash.service.AuthService;
 import ru.yakovlev05.school.flash.service.RefreshTokenService;
 import ru.yakovlev05.school.flash.service.UserService;
 import ru.yakovlev05.school.flash.util.JwtUtil;
+
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Service
@@ -66,8 +68,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public void logout(LogoutRequest logoutRequest) {
-        refreshTokenService.removeByToken(logoutRequest.refreshToken());
+    public void logout(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) return;
+
+        Cookie refreshCookie = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("refresh-token"))
+                .findFirst()
+                .orElse(null);
+        if (refreshCookie == null) return;
+
+        refreshTokenService.removeByToken(refreshCookie.getValue());
     }
 
     /**

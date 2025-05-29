@@ -1,8 +1,8 @@
 package ru.yakovlev05.school.flash.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.yakovlev05.school.flash.dto.auth.LoginRequest;
-import ru.yakovlev05.school.flash.dto.auth.LogoutRequest;
 import ru.yakovlev05.school.flash.dto.auth.RegistrationRequest;
 
 public interface AuthService {
@@ -10,7 +10,7 @@ public interface AuthService {
 
     void login(LoginRequest loginRequest, HttpServletResponse response);
 
-    void logout(LogoutRequest logoutRequest);
+    void logout(HttpServletRequest request);
 
     String refreshToken(String validatedRefreshToken, HttpServletResponse response);
 }
