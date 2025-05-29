@@ -27,10 +27,10 @@ management:
 
 security:
   jwt:
-    key-for-access: qwertyqwertyqwrtyytrtetetrrrrrrtrtrrtrertetetrrterttrtrtrtrtrtrtqwerty
-    key-for-refresh: weqdlsfsghfhdsdhdfhdfgrtrtrtrtrtttttttttttttttttttttttrtetrt
-    access-token-life-time: 10000
-    refresh-token-life-time: 50000
+    key-for-access: ${ACCESS_KEY:c2Zzc2Rmc2Rmc2RmZHNkZGFkc2Zhc2RmYWRzZGZjZmFzZnNhY2ZkZmNhc2Nmc2NzYWNmY2NzY3Njc2FzYWZhY3NmY3NhY3NhZGNhc2RjZHNjc2Nz}
+    key-for-refresh: ${REFRESH_KEY:c2Zzc2RmZnNkZnNkZmRzZGRhZHNmYXNkZmFkc2RmY2ZzZHNmZHNmc2Rmc2Rkc2RmZGZk}
+    access-token-life-time: 18000
+    refresh-token-life-time: 10080
 
 ticket:
   timeToLiveInSeconds: 300
